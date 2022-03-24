@@ -1,4 +1,4 @@
-package com.maku.interviewweatherapp.search.dashboard
+package com.maku.interviewweatherapp.about.dashboard
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.maku.interviewweatherapp.R
 import com.maku.interviewweatherapp.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {

@@ -12,5 +12,6 @@ object ApiConstants {
 }
 
 object ApiParameters {
-    const val CITY_ID = "page"
+    const val CITY_ID = "id"
+    const val APP_ID = "appid"
 }

@@ -1,17 +1,15 @@
 package com.maku.interviewweatherapp.common.data.api.models
 
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.gson.annotations.SerializedName
 
-@JsonClass(generateAdapter = true)
 data class Sys(
-    @field:Json(name = "country")
+    @SerializedName("country")
     val country: String,
-    @field:Json(name = "sunrise")
+    @SerializedName("sunrise")
     val sunrise: Int,
-    @field:Json(name = "sunset")
+    @SerializedName("sunset")
     val sunset: Int,
-    @field:Json(name = "timezone")
+    @SerializedName("timezone")
     val timezone: Int
 )

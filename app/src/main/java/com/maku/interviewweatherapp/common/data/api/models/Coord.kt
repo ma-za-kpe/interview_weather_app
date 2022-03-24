@@ -1,13 +1,11 @@
 package com.maku.interviewweatherapp.common.data.api.models
 
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.gson.annotations.SerializedName
 
-@JsonClass(generateAdapter = true)
 data class Coord(
-    @field:Json(name = "lat")
+    @SerializedName("lat")
     val lat: Double,
-    @field:Json(name = "lon")
+    @SerializedName("lon")
     val lon: Double
 )

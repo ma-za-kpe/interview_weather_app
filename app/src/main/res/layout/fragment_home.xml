@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".list.home.HomeFragment">
+    android:background="@color/background"
+    tools:context=".list.home.HomeFragment"
+    android:paddingBottom="?attr/actionBarSize">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/weather_recycler_view"
@@ -18,13 +20,25 @@
         android:descendantFocusability="blocksDescendants"
         tools:layoutManager="GridLayoutManager"
         tools:listitem="@layout/recycler_view_weather_item"
-        tools:spanCount="2"
+        tools:spanCount="1"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
+        android:visibility="gone"
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/nodata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data_available"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

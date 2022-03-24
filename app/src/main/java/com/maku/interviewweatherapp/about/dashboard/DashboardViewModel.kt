@@ -1,4 +1,4 @@
-package com.maku.interviewweatherapp.search.dashboard
+package com.maku.interviewweatherapp.about.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

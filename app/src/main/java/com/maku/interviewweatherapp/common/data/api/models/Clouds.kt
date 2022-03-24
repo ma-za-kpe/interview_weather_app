@@ -1,11 +1,9 @@
 package com.maku.interviewweatherapp.common.data.api.models
 
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.gson.annotations.SerializedName
 
-@JsonClass(generateAdapter = true)
 data class Clouds(
-    @field:Json(name = "all")
-    val all: Int
+    @SerializedName("all")
+    val all: Int?
 )

@@ -2,4 +2,22 @@
     <string name="app_name">InterviewWeatherApp</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Search</string>
+    <string name="search">search</string>
+    <string name="no_data_available">No Data available</string>
+    <string name="arua_ug">Arua, Ug</string>
+    <string name="very_cloudy">Very Cloudy</string>
+    <string name="weather_icon">weather icon</string>
+    <string name="_2020_12_10">2020-12-10</string>
+    <string name="o">o</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="current_weather">Current Weather</string>
+    <string name="wind">WIND</string>
+    <string name="humidity">HUMIDITY</string>
+    <string name="_5km_h">5Km/h</string>
+    <string name="_90">90%</string>
+    <string name="visibility">VISIBILITY</string>
+    <string name="_10km">10km</string>
+    <string name="_1014_mb">1014 mb</string>
+    <string name="_25">25</string>
 </resources>

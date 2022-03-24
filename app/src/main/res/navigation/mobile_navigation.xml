@@ -9,12 +9,27 @@
         android:id="@+id/navigation_home"
         android:name="com.maku.interviewweatherapp.list.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.maku.interviewweatherapp.search.dashboard.DashboardFragment"
+        android:name="com.maku.interviewweatherapp.about.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
+    <dialog
+        android:id="@+id/detailsFragment"
+        android:name="com.maku.interviewweatherapp.details.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" >
+        <action
+            android:id="@+id/action_detailsFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/detailsFragment"
+            app:popUpToInclusive="true" />
+    </dialog>
 
 </navigation>

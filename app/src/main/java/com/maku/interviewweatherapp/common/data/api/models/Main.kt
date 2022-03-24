@@ -1,25 +1,23 @@
 package com.maku.interviewweatherapp.common.data.api.models
 
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.gson.annotations.SerializedName
 
-@JsonClass(generateAdapter = true)
 data class Main(
-    @field:Json(name = "feels_like")
+    @SerializedName("feels_like")
     val feelsLike: Double,
-    @field:Json(name = "grnd_level")
+    @SerializedName("grnd_level")
     val grndLevel: Int,
-    @field:Json(name = "humidity")
+    @SerializedName("humidity")
     val humidity: Int,
-    @field:Json(name = "pressure")
+    @SerializedName("pressure")
     val pressure: Int,
-    @field:Json(name = "sea_level")
+    @SerializedName("sea_level")
     val seaLevel: Int,
-    @field:Json(name = "temp")
+    @SerializedName("temp")
     val temp: Double,
-    @field:Json(name = "temp_max")
+    @SerializedName("temp_max")
     val tempMax: Double,
-    @field:Json(name = "temp_min")
+    @SerializedName("temp_min")
     val tempMin: Double
 )

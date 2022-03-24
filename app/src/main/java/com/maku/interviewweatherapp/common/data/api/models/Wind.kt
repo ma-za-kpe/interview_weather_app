@@ -1,13 +1,11 @@
 package com.maku.interviewweatherapp.common.data.api.models
 
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.gson.annotations.SerializedName
 
-@JsonClass(generateAdapter = true)
 data class Wind(
-    @field:Json(name = "deg")
+    @SerializedName("deg")
     val deg: Int,
-    @field:Json(name = "speed")
+    @SerializedName("speed")
     val speed: Double
 )
