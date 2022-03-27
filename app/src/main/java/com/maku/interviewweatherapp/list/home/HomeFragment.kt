@@ -21,6 +21,7 @@ import com.maku.interviewweatherapp.common.vm.SharedViewModel
 import com.maku.interviewweatherapp.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -30,10 +31,6 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
     companion object {
         private const val ITEMS_PER_ROW = 1
     }
-
-//    private val workManager by lazy {
-//        WorkManager.getInstance(applicationContext)
-//    }
 
     private var allCityWeatherData: List<CityWeather>? = null
 
@@ -76,10 +73,16 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        val workManager by lazy {
+            WorkManager.getInstance(requireContext())
+        }
+
+        // TODO: this cn be handled better... or just use alarm manager
+        createPeriodicWorkRequest(workManager)
 
         return root
     }
@@ -90,7 +93,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         setupUI()
     }
 
-    fun createPeriodicWorkRequest() {
+    private fun createPeriodicWorkRequest(workManager: WorkManager) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .setRequiresStorageNotLow(true)
@@ -101,23 +104,42 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         val refreshWork =
             PeriodicWorkRequest.Builder(
                 RefreshDbWorker::class.java,
-                15, // repeating interval
+                1, // repeating interval
                 TimeUnit.HOURS,
-                5, // flex interval - worker will run some when within this period of time, but at the end of repeating interval
+                5, // flex interval
                 TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
 
         WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
-            "periodicImageDownload",
+            "refreshDbWithServer",
             ExistingPeriodicWorkPolicy.KEEP,
             refreshWork
         )
+
+        observeWork(workManager, refreshWork.id)
     }
+
+    private fun observeWork(workManager: WorkManager, id: UUID) {
+        // 1
+        workManager.getWorkInfoByIdLiveData(id)
+            .observe(this, { info ->
+                // 2
+                if (info != null && info.state.isFinished) {
+                    // do refresh here
+                    requestApiData()
+                }
+            })
+    }
+
 
     private fun setupUI() {
         setHasOptionsMenu(true)
         setupRecyclerView()
+        binding.refresh.setOnRefreshListener {
+            binding.refresh.isRefreshing = false
+            requestApiData()
+        }
     }
 
     private fun readLocalWeathereData() {
@@ -157,6 +179,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
                     binding.progressBar.visibility = View.VISIBLE
                     requireActivity().toast("Loading data ... ")
                 }
+                else -> {}
             }
 
         })
@@ -200,7 +223,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     // in this case we shall only work with the local db if its not empyt
-    fun searchDbData(search_term: String?){
+    private fun searchDbData(search_term: String?){
         // 0. check list/dataset size
         // 1. implement search logic() same filter loic as above
         if (allCityWeatherData?.size!! > 0) {
