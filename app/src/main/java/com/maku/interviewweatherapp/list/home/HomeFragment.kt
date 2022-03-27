@@ -10,11 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.work.*
 import com.maku.interviewweatherapp.R
 import com.maku.interviewweatherapp.common.data.api.models.CityWeather
-import com.maku.interviewweatherapp.common.data.cache.entities.FavoriteWeatherEntity
-import com.maku.interviewweatherapp.common.data.cache.entities.WeatherEntity
-import com.maku.interviewweatherapp.common.logging.Logger
+import com.maku.interviewweatherapp.common.logging.Logger.d
 import com.maku.interviewweatherapp.common.presentation.WeatherAdapter
 import com.maku.interviewweatherapp.common.utils.NetworkResult
 import com.maku.interviewweatherapp.common.utils.toast
@@ -22,6 +21,8 @@ import com.maku.interviewweatherapp.common.vm.SharedViewModel
 import com.maku.interviewweatherapp.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
+
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
@@ -30,8 +31,11 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         private const val ITEMS_PER_ROW = 1
     }
 
+//    private val workManager by lazy {
+//        WorkManager.getInstance(applicationContext)
+//    }
+
     private var allCityWeatherData: List<CityWeather>? = null
-    private var favWeatherCity: List<FavoriteWeatherEntity>? = null
 
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
@@ -43,7 +47,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
     private val model: SharedViewModel by activityViewModels()
 
     private val mAdapter by lazy {
-        WeatherAdapter(requireActivity(), favWeatherCity as List<FavoriteWeatherEntity>, {
+        WeatherAdapter( {
             favoriteWeather(it as CityWeather)
         }, {
             viewDetails(it as CityWeather)
@@ -58,8 +62,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
 
     // TODO: find better way to do this, either fav through details fragment, or domain modelling
     private fun favoriteWeather(cityWeather: CityWeather) {
-        // 1. add city to favorite weather table
-        homeViewModel.insertFavWeatherData(FavoriteWeatherEntity(0, cityWeather))
+        homeViewModel.favWeather(true, cityWeather.id)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +80,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
         return root
     }
 
@@ -84,17 +88,31 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         super.onViewCreated(view, savedInstanceState)
         readLocalWeathereData()
         setupUI()
-         favWeatherLogic()
     }
 
-    private fun favWeatherLogic() {
-        homeViewModel.readAllFavWeatherData.observe(viewLifecycleOwner, {
-            try {
-                favWeatherCity = it
-            } catch (e: Exception){
-                Logger.d("fav city error $e")
-            }
-        })
+    fun createPeriodicWorkRequest() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresStorageNotLow(true)
+            .setRequiresBatteryNotLow(true)
+            .build()
+
+        // TODO: dont forget to tweak this to fit project description
+        val refreshWork =
+            PeriodicWorkRequest.Builder(
+                RefreshDbWorker::class.java,
+                15, // repeating interval
+                TimeUnit.HOURS,
+                5, // flex interval - worker will run some when within this period of time, but at the end of repeating interval
+                TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build()
+
+        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
+            "periodicImageDownload",
+            ExistingPeriodicWorkPolicy.KEEP,
+            refreshWork
+        )
     }
 
     private fun setupUI() {
@@ -103,15 +121,12 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun readLocalWeathereData() {
-        Logger.d("fav city ${favWeatherCity?.size}")
         lifecycleScope.launch {
             homeViewModel.readAllWeatherData.observe(viewLifecycleOwner, { localData ->
                 if (localData.isNotEmpty()) {
-                    // show in recyclerview
-                    allCityWeatherData = localData[0].WeatherResponse
-                    allCityWeatherData?.let { it ->
-                        mAdapter.setData(it)
-                    }
+                    d("data: all city  ${localData.size}")
+                    allCityWeatherData = localData
+                    mAdapter.setDataWhenFavEmpty(localData)
                 } else {
                     requestApiData()
                 }
@@ -126,7 +141,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
                 is NetworkResult.Success -> {
                     binding.progressBar.visibility = View.GONE
                     response.data.let {
-                        it?.list?.let { it1 -> mAdapter.setData(it1) }
+                        it?.list?.let { it1 -> mAdapter.setDataWhenFavEmpty(it1) }
                     }
                 }
 
@@ -164,14 +179,14 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         searchView?.isSubmitButtonEnabled = true
         searchView?.setOnQueryTextListener(this)
         searchView!!.setOnCloseListener {
-             mAdapter.setData(allCityWeatherData!!)
+            mAdapter.setDataWhenFavEmpty(allCityWeatherData!!)
             false
         }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (query != null){
-            Logger.d("searching")
+            d("searching")
             searchDbData(query)
         }
         return true
@@ -189,7 +204,7 @@ class HomeFragment : Fragment(), SearchView.OnQueryTextListener {
         // 0. check list/dataset size
         // 1. implement search logic() same filter loic as above
         if (allCityWeatherData?.size!! > 0) {
-            mAdapter.setData(filterResults(allCityWeatherData!!, search_term!!))
+            mAdapter.setDataWhenFavEmpty(filterResults(allCityWeatherData!!, search_term!!))
         } else {
             // this is where you can query the remote db, although this logic is not necessary
                 // according to the scope of the project

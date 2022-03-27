@@ -1,8 +1,12 @@
 package com.maku.interviewweatherapp.common.data.api.models
 
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.maku.interviewweatherapp.common.data.cache.CacheConstants
 
+@Entity(tableName = CacheConstants.WEATHER_TABLE)
 data class CityWeather(
     @SerializedName("clouds")
     val clouds: Clouds,
@@ -11,6 +15,7 @@ data class CityWeather(
     @SerializedName("dt")
     val dt: Int,
     @SerializedName("id")
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     @SerializedName("main")
     val main: Main,
@@ -23,5 +28,7 @@ data class CityWeather(
     @SerializedName("weather")
     val weather: List<Weather>,
     @SerializedName("wind")
-    val wind: Wind
+    val wind: Wind,
+    @SerializedName("fav")
+    val fav: Boolean
 )

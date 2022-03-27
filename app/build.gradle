@@ -48,6 +48,11 @@ android {
 
 dependencies {
 
+    // Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    implementation 'com.google.code.gson:gson:2.8.9'
+
     implementation "androidx.core:core-ktx:$core_ktx"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$livedata_ktx"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$livedata_ktx"

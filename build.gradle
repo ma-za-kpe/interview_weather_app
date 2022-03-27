@@ -8,6 +8,7 @@ buildscript {
         minSdkVersion = 21
 
         // dependency versions
+        work_version = "2.7.1"
         retrofitVersion = '2.9.0'
         livedata_ktx = "2.4.1"
         core_ktx = "1.7.0"

@@ -3,9 +3,9 @@ package com.maku.interviewweatherapp.list.home
 import android.app.Application
 import androidx.lifecycle.*
 import com.maku.interviewweatherapp.common.data.api.ApiConstants
+import com.maku.interviewweatherapp.common.data.api.models.CityWeather
 import com.maku.interviewweatherapp.common.data.api.models.WeatherResponse
-import com.maku.interviewweatherapp.common.data.cache.entities.CacheWeather
-import com.maku.interviewweatherapp.common.data.cache.entities.FavoriteWeatherEntity
+import com.maku.interviewweatherapp.common.data.cache.entities.WeatherEntity
 import com.maku.interviewweatherapp.common.data.repo.WeatherRepoImpl
 import com.maku.interviewweatherapp.common.utils.NetworkException
 import com.maku.interviewweatherapp.common.utils.NetworkResult
@@ -22,20 +22,19 @@ class HomeViewModel @Inject constructor (private val repo: WeatherRepoImpl, appl
 
     /**ROOM*/
     // fav local weather
-    val readAllFavWeatherData: LiveData<List<FavoriteWeatherEntity>> = repo.getFavWeather().asLiveData()
-
-    fun insertFavWeatherData(weatherEntity: FavoriteWeatherEntity) = viewModelScope.launch(
+    fun favWeather(fav: Boolean, id: Int) = viewModelScope.launch(
         Dispatchers.IO){
-        repo.storeFavWeather(weatherEntity)
+        repo.favWeather(fav, id)
     }
 
     // local weather
-    val readAllWeatherData: LiveData<List<CacheWeather>> = repo.getWeather().asLiveData()
+    val readAllWeatherData: LiveData<List<CityWeather>> = repo.getWeather().asLiveData()
 
-    private fun insertWeatherData(weatherEntity: CacheWeather) = viewModelScope.launch(
+    private fun insertWeatherData(weatherEntity: CityWeather) = viewModelScope.launch(
         Dispatchers.IO){
         repo.storeWeather(weatherEntity)
     }
+
     /**ROOM*/
 
     // get all weather data
@@ -51,9 +50,8 @@ class HomeViewModel @Inject constructor (private val repo: WeatherRepoImpl, appl
                 weatherResponse.value = handleGetAllWeatherResponse(response)
                 // cache data immediately after receiving it
                 val weather = weatherResponse.value!!.data
-                if (weather != null){
-                    //cache
-                    offlineCacheWeather(weather)
+                weather?.list?.forEach {
+                    offlineCacheWeather(it)
                 }
             } catch (e: Exception) {
                 when (e) {
@@ -68,9 +66,9 @@ class HomeViewModel @Inject constructor (private val repo: WeatherRepoImpl, appl
             }
     }
 
-    private fun offlineCacheWeather(weather: WeatherResponse?) {
-        val weatherEntity = weather.list.forEach { CacheWeather(it.id) }
-        insertWeatherData(weatherEntity)
+    private fun offlineCacheWeather(weather: CityWeather) {
+        val weatherEntity = WeatherEntity(weather)
+        insertWeatherData(weather)
     }
 
     // TODO: replace or add with more error codes from the api docs

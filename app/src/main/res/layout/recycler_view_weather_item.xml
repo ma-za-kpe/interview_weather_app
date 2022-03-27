@@ -5,7 +5,7 @@
     <data>
         <variable
             name="result"
-            type="com.maku.interviewweatherapp.common.data.cache.entities.CacheWeather" />
+            type="com.maku.interviewweatherapp.common.data.api.models.CityWeather" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

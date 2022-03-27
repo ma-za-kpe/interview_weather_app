@@ -7,8 +7,8 @@ import com.maku.interviewweatherapp.common.data.cache.CacheConstants
 
 @Entity(tableName = CacheConstants.WEATHER_TABLE)
 class WeatherEntity(
-    var WeatherResponse: List<CityWeather>?
+    var WeatherResponse: CityWeather?
 ) {
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 }

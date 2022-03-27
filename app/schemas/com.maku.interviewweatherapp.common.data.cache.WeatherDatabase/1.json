@@ -2,38 +2,30 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6f4c762122d21061caafcc2c951fb1d2",
+    "identityHash": "1c546730dc7d127efbb3043147cf7caa",
     "entities": [
       {
         "tableName": "city_weather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`WeatherResponse` TEXT, `id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clouds` TEXT NOT NULL, `coord` TEXT NOT NULL, `dt` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `main` TEXT NOT NULL, `name` TEXT NOT NULL, `sys` TEXT NOT NULL, `visibility` INTEGER NOT NULL, `weather` TEXT NOT NULL, `wind` TEXT NOT NULL, `fav` INTEGER NOT NULL)",
         "fields": [
           {
-            "fieldPath": "WeatherResponse",
-            "columnName": "WeatherResponse",
+            "fieldPath": "clouds",
+            "columnName": "clouds",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "coord",
+            "columnName": "coord",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dt",
+            "columnName": "dt",
             "affinity": "INTEGER",
             "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "fav_city_weather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `favWeatherCity` TEXT NOT NULL)",
-        "fields": [
+          },
           {
             "fieldPath": "id",
             "columnName": "id",
@@ -41,9 +33,45 @@
             "notNull": true
           },
           {
-            "fieldPath": "favWeatherCity",
-            "columnName": "favWeatherCity",
+            "fieldPath": "main",
+            "columnName": "main",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sys",
+            "columnName": "sys",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "visibility",
+            "columnName": "visibility",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weather",
+            "columnName": "weather",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wind",
+            "columnName": "wind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fav",
+            "columnName": "fav",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -60,7 +88,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6f4c762122d21061caafcc2c951fb1d2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c546730dc7d127efbb3043147cf7caa')"
     ]
   }
 }

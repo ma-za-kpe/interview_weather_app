@@ -1,34 +1,22 @@
 package com.maku.interviewweatherapp.common.data.cache.doa
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.maku.interviewweatherapp.common.data.cache.entities.CacheWeather
-import com.maku.interviewweatherapp.common.data.cache.entities.FavoriteWeatherEntity
-import com.maku.interviewweatherapp.common.data.cache.entities.WeatherEntity
+import androidx.room.*
+import com.maku.interviewweatherapp.common.data.api.models.CityWeather
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherDao {
-//    // weather
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insertWeather(weatherEntity: WeatherEntity)
-//
-//    @Query("SELECT * FROM city_weather ORDER BY id ASC")
-//    fun readWeather(): Flow<List<WeatherEntity>>
-
-    // cached weather
+    // weather
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWeather(weatherEntity: CacheWeather)
+    suspend fun insertWeather(weatherEntity: CityWeather)
 
-    @Query("SELECT * FROM cached_city_weather ORDER BY id ASC")
-    fun readWeather(): Flow<List<CacheWeather>>
+    @Query("SELECT * FROM city_weather ORDER BY fav DESC")
+    fun readWeather(): Flow<List<CityWeather>>
 
-    // fav weather
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavWeather(weatherEntity: FavoriteWeatherEntity)
+    /**
+     * Updating only fav
+     */
+    @Query("UPDATE city_weather SET fav=:fav WHERE id = :id")
+    fun favWeather(fav: Boolean?, id: Int)
 
-    @Query("SELECT * FROM fav_city_weather ORDER BY id ASC")
-    fun readFavWeather(): Flow<List<FavoriteWeatherEntity>>
 }

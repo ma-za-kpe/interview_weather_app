@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.maku.interviewweatherapp.about.dashboard.DashboardFragment"
+        android:name="com.maku.interviewweatherapp.favorite.dashboard.FavoriteFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
     <dialog
