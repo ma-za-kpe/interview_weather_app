@@ -33,8 +33,8 @@ development.
 - Please ensure the app works gracefully in and out of internet activity
 
 ## TODO'S
-- Remove extra 
-- Add unit tests more tests.
+- Remove extra screen
+- Add unit tests.
 - Clean dependencies in the app gradle file.
 - Clean out all unused classes/ files (CLEAN UP)
 - DRY the app a bit more.
